@@ -23,8 +23,7 @@ row/coloumn reductions) and the final optimal assignment.
 ## Requirements
 
 - A C++11 compiler
-- CMake (>= 2.8)
-- MPI (required by the build)
+- CMake (>= 3.10)
 - Doxygen (optional, only to build the documentation)
 
 ## Build and run
