@@ -6,6 +6,13 @@
 #include <iostream>
 #include "permutation.h"
 
+// Forward declarations needed to declare the output operator (defined in
+// output.cc) as a friend of the Matrix template below.
+template <typename type> class Matrix;
+
+template <typename type>
+std::ostream &operator<< (std::ostream &os, const Matrix<type> &dt);
+
 /**
  *  Matrix Class is a generic structure to store data in matrix form.
  */
@@ -140,8 +147,9 @@ public:
    *   std::cout << p;
    *  @endcode
    */
+  template <typename T>
   friend std::ostream &operator<< (std::ostream &os,
-                                   const Matrix &dt);
+                                   const Matrix<T> &dt);
 
   /**
    * Access to the element (@p i , @p j).

@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
             << std::endl;
 
   print_msg("-> Create a matrix 2x2 and two elements in position (2,1) and one in position (4,4):");
-  Matrix m(2,2);
+  Matrix<> m(2,2);
   std::cout << m;
   m.status();
 

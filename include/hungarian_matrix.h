@@ -137,6 +137,10 @@ public:
   std::vector<unsigned int>
   get_max(bool row=true);
 
+  // Keep the inherited no-argument status() (rows/coloumns/trace) reachable: the
+  // status(i, j) overload below would otherwise hide it by name.
+  using Matrix<unsigned int>::status;
+
   /**
    *  Return the working-matrix element @p res in postion (@p i , @p j).
    */

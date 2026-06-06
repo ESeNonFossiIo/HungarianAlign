@@ -39,6 +39,11 @@ operator<<(std::ostream &os, const Matrix<type> &m)
   return os;
 }
 
+// Explicit instantiations so the operator is emitted in this translation unit
+// and can be linked from the tests and other sources.
+template std::ostream &operator<<(std::ostream &, const Matrix<unsigned int> &);
+template std::ostream &operator<<(std::ostream &, const Matrix<char> &);
+
 std::ostream &
 operator<<(std::ostream &os, const HMatrix &m)
 {
