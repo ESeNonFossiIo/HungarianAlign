@@ -1,8 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
 
-
-
-PROJECT(sequence-comparison)
+PROJECT(sequence-comparison CXX)
 
 # Require C++11:
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -22,28 +20,6 @@ FILE(GLOB exec main/*.cc)
 
 INCLUDE_DIRECTORIES(include)
 ADD_EXECUTABLE(sequence-comparison ${exec})
-
-FIND_PACKAGE(MPI REQUIRED)
-INCLUDE_DIRECTORIES(${MPI_INCLUDE_PATH})
-TARGET_LINK_LIBRARIES(sequence-comparison ${MPI_LIBRARIES})
-
-IF(MPI_COMPILE_FLAGS)
-  SET_TARGET_PROPERTIES(  sequence-comparison
-    PROPERTIES COMPILE_FLAGS "${MPI_COMPILE_FLAGS}"
-  )
-ENDIF()
-
-IF(MPI_LINK_FLAGS)
-  SET_TARGET_PROPERTIES(  sequence-comparison
-    PROPERTIES LINK_FLAGS "${MPI_LINK_FLAGS}"
-  )
-ENDIF()
-
-# FIND_PACKAGE(OpenMP)
-# if (OPENMP_FOUND)
-#   set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-#   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-# ENDIF()
 
 SET(_lib "sequence-comparison-lib")
 ADD_LIBRARY(${_lib} SHARED ${cc_files})
