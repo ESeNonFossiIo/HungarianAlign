@@ -1,1 +1,308 @@
-<meta http-equiv="refresh" content="0; url=./doc/html/index.html" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HungarianAlign — sequence alignment via the Hungarian algorithm</title>
+<meta name="description" content="Align two labelled sequences by modelling the problem as an assignment problem and solving it with the Hungarian algorithm. A small, dependency-free C++11 project." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg-soft: #161b22;
+    --bg-card: #1a2029;
+    --border: #2a3340;
+    --text: #e6edf3;
+    --muted: #9aa7b4;
+    --accent: #4c8dff;
+    --accent-2: #7c5cff;
+    --green: #3fb950;
+    --code-bg: #11161d;
+    --radius: 14px;
+    --maxw: 980px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code, pre, .mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+  /* Top nav */
+  header.nav {
+    position: sticky; top: 0; z-index: 10;
+    backdrop-filter: blur(10px);
+    background: rgba(13,17,23,0.78);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: -0.02em; }
+  .brand .dot { width: 11px; height: 11px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow: 0 0 14px rgba(76,141,255,.6); }
+  .nav-links { display: flex; gap: 22px; align-items: center; }
+  .nav-links a { color: var(--muted); font-size: 14px; font-weight: 500; }
+  .nav-links a:hover { color: var(--text); text-decoration: none; }
+  @media (max-width: 620px) { .nav-links .hide-sm { display: none; } }
+
+  /* Hero */
+  .hero { padding: 88px 0 56px; position: relative; overflow: hidden; }
+  .hero::before {
+    content: ""; position: absolute; inset: -40% 0 auto 0; height: 480px;
+    background: radial-gradient(60% 60% at 50% 0%, rgba(124,92,255,.16), transparent 70%),
+                radial-gradient(50% 50% at 80% 10%, rgba(76,141,255,.14), transparent 70%);
+    pointer-events: none;
+  }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid var(--border); background: var(--bg-soft);
+    color: var(--muted); font-size: 13px; font-weight: 500;
+    padding: 5px 12px; border-radius: 999px; margin-bottom: 22px;
+  }
+  .badge .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 0 rgba(63,185,80,.5); animation: pulse 2s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(63,185,80,.45);} 70% { box-shadow: 0 0 0 8px rgba(63,185,80,0);} 100% { box-shadow: 0 0 0 0 rgba(63,185,80,0);} }
+  h1 {
+    font-size: clamp(34px, 6vw, 56px); line-height: 1.05; letter-spacing: -0.03em;
+    margin: 0 0 18px; font-weight: 800;
+  }
+  h1 .grad { background: linear-gradient(120deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lede { font-size: clamp(17px, 2.4vw, 20px); color: var(--muted); max-width: 660px; margin: 0 0 32px; }
+  .cta { display: flex; flex-wrap: wrap; gap: 14px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 12px 22px; border-radius: 11px; font-weight: 600; font-size: 15px;
+    border: 1px solid transparent; cursor: pointer; transition: transform .12s ease, background .2s ease;
+  }
+  .btn:hover { text-decoration: none; transform: translateY(-1px); }
+  .btn-primary { background: linear-gradient(120deg, var(--accent), var(--accent-2)); color: #fff; }
+  .btn-ghost { background: var(--bg-soft); border-color: var(--border); color: var(--text); }
+  .btn svg { width: 18px; height: 18px; }
+
+  /* Sections */
+  section { padding: 56px 0; border-top: 1px solid var(--border); }
+  .section-eyebrow { color: var(--accent); font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 8px; }
+  h2 { font-size: clamp(24px, 3.5vw, 32px); letter-spacing: -0.02em; margin: 0 0 14px; font-weight: 700; }
+  .section-sub { color: var(--muted); max-width: 680px; margin: 0 0 34px; }
+
+  /* Cards */
+  .grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px;
+    transition: border-color .2s ease, transform .15s ease;
+  }
+  .card:hover { border-color: #3a4756; transform: translateY(-2px); }
+  .card .ico { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center;
+    background: linear-gradient(135deg, rgba(76,141,255,.18), rgba(124,92,255,.18)); margin-bottom: 14px; }
+  .card .ico svg { width: 22px; height: 22px; color: var(--accent); }
+  .card h3 { margin: 0 0 8px; font-size: 17px; font-weight: 600; }
+  .card p { margin: 0; color: var(--muted); font-size: 14.5px; }
+
+  /* Steps */
+  ol.steps { counter-reset: step; list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; }
+  ol.steps li { position: relative; padding: 18px 20px 18px 64px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); }
+  ol.steps li::before {
+    counter-increment: step; content: counter(step);
+    position: absolute; left: 18px; top: 18px;
+    width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center;
+    font-weight: 700; font-size: 14px; color: #fff;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  }
+  ol.steps li strong { display: block; margin-bottom: 2px; }
+  ol.steps li span { color: var(--muted); font-size: 14.5px; }
+  ol.steps code { background: var(--code-bg); padding: 1px 6px; border-radius: 5px; font-size: 13px; color: #cdd9e5; }
+
+  /* Code block */
+  .codeblock { position: relative; background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .codeblock .titlebar { display: flex; align-items: center; gap: 8px; padding: 11px 16px; border-bottom: 1px solid var(--border); background: rgba(255,255,255,.02); }
+  .codeblock .titlebar .lights { display: flex; gap: 6px; }
+  .codeblock .titlebar .lights i { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+  .codeblock .titlebar .lights i:nth-child(1){ background:#ff5f56;} .codeblock .titlebar .lights i:nth-child(2){ background:#ffbd2e;} .codeblock .titlebar .lights i:nth-child(3){ background:#27c93f;}
+  .codeblock .titlebar .fname { color: var(--muted); font-size: 12.5px; }
+  .codeblock pre { margin: 0; padding: 18px 20px; overflow-x: auto; font-size: 13.5px; line-height: 1.7; color: #cdd9e5; }
+  .codeblock .c { color: #6b7785; } .codeblock .k { color: #7c5cff; } .codeblock .cmd { color: var(--green); }
+
+  /* Two-col */
+  .cols { display: grid; gap: 26px; grid-template-columns: 1fr 1fr; align-items: start; }
+  @media (max-width: 760px) { .cols { grid-template-columns: 1fr; } }
+
+  /* Footer */
+  footer { border-top: 1px solid var(--border); padding: 36px 0; color: var(--muted); font-size: 14px; }
+  .footer-inner { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; }
+  .footer-inner a { color: var(--muted); }
+  .footer-inner a:hover { color: var(--text); }
+
+  .pill-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+  .pill { font-size: 12.5px; color: var(--muted); border: 1px solid var(--border); border-radius: 999px; padding: 4px 12px; background: var(--bg-soft); }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <div class="brand"><span class="dot"></span> HungarianAlign</div>
+    <nav class="nav-links">
+      <a href="#how" class="hide-sm">How it works</a>
+      <a href="#start" class="hide-sm">Quick start</a>
+      <a href="./doc/html/index.html">API docs</a>
+      <a href="https://github.com/ESeNonFossiIo/HungarianAlign">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero" style="border-top:none">
+    <div class="wrap">
+      <span class="badge"><span class="pulse"></span> C++11 &middot; CMake &middot; zero dependencies</span>
+      <h1>Optimal sequence alignment,<br /><span class="grad">solved as an assignment problem.</span></h1>
+      <p class="lede">
+        HungarianAlign pairs two labelled sequences by turning their co-occurrences into a
+        cost matrix and finding the permutation that maximises its trace &mdash; the best overall
+        alignment &mdash; using the classic <strong>Hungarian algorithm</strong>.
+      </p>
+      <div class="cta">
+        <a class="btn btn-primary" href="#start">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>
+          Get started
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/ESeNonFossiIo/HungarianAlign">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.7.5.5 5.7.5 12a11.5 11.5 0 0 0 7.9 10.9c.6.1.8-.2.8-.5v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7 0-.7 0-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.4-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0C17 4.6 18 4.9 18 4.9c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.6.8.5A11.5 11.5 0 0 0 23.5 12C23.5 5.7 18.3.5 12 .5z"/></svg>
+          View on GitHub
+        </a>
+        <a class="btn btn-ghost" href="./doc/html/index.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          API reference
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT IT DOES -->
+  <section id="features">
+    <div class="wrap">
+      <p class="section-eyebrow">What it does</p>
+      <h2>A small, transparent solver</h2>
+      <p class="section-sub">Every label pairing increments a cell of a cost matrix; the solver finds the row/column permutation that maximises the trace. Each intermediate step is printed so you can watch the algorithm work.</p>
+      <div class="grid">
+        <div class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg></div>
+          <h3>Cost matrix from labels</h3>
+          <p><code>SequenceProblem</code> reads two label streams and tallies every observed row/column pairing into a Hungarian cost matrix.</p>
+        </div>
+        <div class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/></svg></div>
+          <h3>Maximise &rarr; minimise</h3>
+          <p><code>HMatrix</code> flips the maximise-trace goal into its complement, then reduces rows and columns and covers zeros until an optimal assignment is reachable.</p>
+        </div>
+        <div class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+          <h3>Optimal alignment</h3>
+          <p>The final permutation is the best overall alignment of the two sequences &mdash; printed alongside every reduction step for full transparency.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how">
+    <div class="wrap">
+      <p class="section-eyebrow">How it works</p>
+      <h2>From two sequences to one optimal pairing</h2>
+      <p class="section-sub">The pipeline is intentionally readable &mdash; a handful of focused classes, each doing one job.</p>
+      <ol class="steps">
+        <li><strong>Read &amp; tally</strong><span><code>SequenceProblem</code> pairs the two input files entry by entry and fills the cost matrix from observed label co-occurrences.</span></li>
+        <li><strong>Complement</strong><span><code>HMatrix</code> converts the maximise-trace problem into its minimise-cost form (the complement matrix).</span></li>
+        <li><strong>Reduce &amp; cover</strong><span>Rows and columns are reduced, then zeros are covered with the minimum number of lines until an optimal assignment exists.</span></li>
+        <li><strong>Assign</strong><span><code>Mask</code>, <code>Permutation</code> / <code>LPermutation</code> and the <code>utilities</code> namespace handle the bookkeeping and emit the final alignment.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- QUICK START -->
+  <section id="start">
+    <div class="wrap">
+      <p class="section-eyebrow">Quick start</p>
+      <h2>Build and run in four commands</h2>
+      <p class="section-sub">Needs only a C++11 compiler and CMake (&ge; 3.10). Doxygen is optional, for the docs.</p>
+      <div class="cols">
+        <div class="codeblock">
+          <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><span class="fname">build &amp; run</span></div>
+<pre><span class="c"># compile and align the example data</span>
+<span class="cmd">mkdir</span> build &amp;&amp; <span class="cmd">cd</span> build
+<span class="cmd">cmake</span> ..
+<span class="cmd">make</span>
+<span class="cmd">make</span> run</pre>
+        </div>
+        <div class="codeblock">
+          <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><span class="fname">tests &amp; docs</span></div>
+<pre><span class="c"># run the test suite</span>
+<span class="cmd">cmake</span> .. -DENABLE_TESTS=ON
+<span class="cmd">make</span> &amp;&amp; <span class="cmd">ctest</span> -V
+
+<span class="c"># build the API documentation</span>
+<span class="cmd">make</span> doc</pre>
+        </div>
+      </div>
+
+      <div style="margin-top:26px" class="cols">
+        <div>
+          <h3 style="margin:0 0 8px; font-size:18px">Input format</h3>
+          <p style="color:var(--muted); margin:0 0 14px; font-size:14.5px">Each <code class="mono">.dat</code> file lists one entry per line as <code class="mono">index&nbsp;label</code>. The two files are paired entry by entry until one is exhausted.</p>
+          <div class="pill-row">
+            <span class="pill">data/example_Q6.dat</span>
+            <span class="pill">data/example_Q7.dat</span>
+          </div>
+        </div>
+        <div class="codeblock">
+          <div class="titlebar"><div class="lights"><i></i><i></i><i></i></div><span class="fname">example.dat</span></div>
+<pre><span class="c"># index  label</span>
+1  1
+2  1
+3  3
+4  3
+5  3</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOCS CTA -->
+  <section id="docs">
+    <div class="wrap">
+      <div class="card" style="display:flex; flex-wrap:wrap; gap:20px; align-items:center; justify-content:space-between; background:linear-gradient(120deg, rgba(76,141,255,.10), rgba(124,92,255,.10)); border-color:#34405a">
+        <div style="max-width:560px">
+          <h2 style="margin:0 0 6px">Browse the full API</h2>
+          <p style="color:var(--muted); margin:0">Class references, file listings and call graphs generated with Doxygen &mdash; <code>SequenceProblem</code>, <code>HMatrix</code>, <code>Mask</code>, <code>Permutation</code> and the rest.</p>
+        </div>
+        <a class="btn btn-primary" href="./doc/html/index.html">Open documentation &rarr;</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <div>
+      <strong style="color:var(--text)">HungarianAlign</strong> &middot; Aligning labelled sequences with the Hungarian algorithm.<br />
+      Licensed under the GNU LGPL v2.1. Built by Luca Ponzoni &amp; Mauro Bardelloni.
+    </div>
+    <div style="display:flex; gap:18px">
+      <a href="https://github.com/ESeNonFossiIo/HungarianAlign">GitHub</a>
+      <a href="./doc/html/index.html">API docs</a>
+      <a href="#top">Back to top</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
