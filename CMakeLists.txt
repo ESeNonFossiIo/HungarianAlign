@@ -1,4 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
 
 
 
@@ -6,6 +6,16 @@ PROJECT(sequence-comparison)
 
 # Require C++11:
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+# Optional code-coverage instrumentation (gcov/lcov). Enable with
+# -DENABLE_COVERAGE=ON; it must be set before the targets are defined so that
+# the flags are applied to every compiled and linked object.
+OPTION(ENABLE_COVERAGE "Enable coverage reporting (gcov)" OFF)
+IF (ENABLE_COVERAGE)
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 --coverage")
+  SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+  SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
+ENDIF()
 
 FILE(GLOB cc_files source/*.cc)
 FILE(GLOB exec main/*.cc)

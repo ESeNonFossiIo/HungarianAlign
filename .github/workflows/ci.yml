@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+
+jobs:
+  test:
+    name: Build & test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake libopenmpi-dev openmpi-bin
+
+      - name: Configure
+        run: cmake -S . -B build -DENABLE_TESTS=ON
+
+      - name: Build
+        run: cmake --build build -j
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake libopenmpi-dev openmpi-bin lcov
+
+      - name: Configure
+        run: cmake -S . -B build -DENABLE_TESTS=ON -DENABLE_COVERAGE=ON
+
+      - name: Build
+        run: cmake --build build -j
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Capture coverage
+        run: |
+          lcov --capture --directory build --output-file coverage.info \
+            --ignore-errors mismatch,gcov,source
+          lcov --remove coverage.info '/usr/*' '*/tests/*' \
+            --output-file coverage.info --ignore-errors unused
+          lcov --list coverage.info
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage.info
+          fail_ci_if_error: false
