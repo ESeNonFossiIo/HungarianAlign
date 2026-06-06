@@ -27,3 +27,4 @@
 
 # build folder
 cxx/build/
+build/
