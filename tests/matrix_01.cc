@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
             << std::endl;
 
   print_msg("-> Create a matrix 2x2:");
-  Matrix m(2,2);
+  Matrix<> m(2,2);
   m.add_one(1,1);
   m.add_one(1,1);
   m.add_one(0,1);
@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
   m.status();
 
   print_msg("-> Copy operator:");
-  Matrix n(2,2);
+  Matrix<> n(2,2);
   std::cout << n;
   n.status();
   n=m;
