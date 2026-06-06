@@ -61,7 +61,8 @@ namespace utilities
   max(std::vector<unsigned int> vec);
 
   /**
-   * TODO:
+   * Return the dimensions of @p mat as a pair: first is the number of rows,
+   * second is the number of coloumns (taken from the first row).
    */
   std::pair<unsigned int, unsigned int>
   size_row_and_col(std::vector<std::vector<unsigned int>> mat);

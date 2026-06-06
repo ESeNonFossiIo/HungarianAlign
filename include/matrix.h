@@ -103,17 +103,15 @@ public:
   maximum_value();
 
   /**
-   *  Return the matrix that summed to @p mat returns a matrix which each entry 
-   *  is equals to @f maximum_value() .
+   *  Replace in place every entry with its complement to the maximum value,
+   *  i.e. each entry becomes maximum_value() - entry.
    */
   void
   maximum_complement();
 
   /**
-   *  Permute the matrix according to the Permutation @p p and
-   *  evaluate the trace.
-   *  If the bool @p row is set on true the Permutation is made
-   *  on the rows, otherwise on coloumns.
+   *  Evaluate the trace, i.e. the sum of the diagonal entries up to the
+   *  smaller dimension of the matrix.
    */
   unsigned int
   trace ();

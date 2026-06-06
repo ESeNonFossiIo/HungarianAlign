@@ -8,17 +8,28 @@
 #include <iostream>
 
 /**
- * Permutation. The constructor takes the variable @p num that is the number
- * of elements
+ * Permutation of @p num elements, stored as a sequence of indices that starts
+ * as the identity (0, 1, ..., num-1) and is rearranged through
+ * switch_elements().
  */
 class Permutation
 {
 public:
+  /**
+   * Build the identity permutation over @p num elements.
+   */
   Permutation(unsigned int num);
 
+  /**
+   * Build a permutation of @p num elements from an explicit @p sequence of
+   * indices.
+   */
   Permutation( unsigned int num,
                std::vector<unsigned int> sequence );
 
+  /**
+   * Copy constructor.
+   */
   Permutation(const Permutation &p);
 
   /**
@@ -74,8 +85,14 @@ protected:
 class LPermutation : public Permutation
 {
 public:
+  /**
+   * Build an empty labeled permutation (no elements, no labels).
+   */
   LPermutation();
 
+  /**
+   * Copy constructor.
+   */
   LPermutation(const LPermutation &p);
 
   /**
@@ -98,13 +115,13 @@ public:
                                    LPermutation &dt);
 
   /**
-   * TODO:
+   * Return the label associated with index @p i.
    */
   char
   get_char(unsigned int i);
 
   /**
-   * TODO:
+   * Return the index associated with label @p c (inverse of get_char()).
    */
   unsigned int
   get_int(char c);

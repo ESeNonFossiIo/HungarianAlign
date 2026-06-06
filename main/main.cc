@@ -1,6 +1,9 @@
 
 /*
- * Description
+ * Entry point: load two labelled sequences from the example data files, build
+ * the assignment problem and solve it with the Hungarian algorithm, printing
+ * the intermediate steps and the optimal alignment.
+ *
  * Author: Luca Ponzoni and Mauro Bardelloni
  * date: 2015-11-23
  * time: 18:34:45
